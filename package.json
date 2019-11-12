@@ -1,0 +1,21 @@
+{
+  "name": "micman",
+  "version": "1.0.0",
+  "description": "A manager for node micro service",
+  "main": "build/main.js",
+  "scripts": {
+    "test": "ECHO TEST",
+    "watch": "tsc -w"
+  },
+  "author": "Victor Serain",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.2",
+    "@types/node": "^12.12.6",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  }
+}
