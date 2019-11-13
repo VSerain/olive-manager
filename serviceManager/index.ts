@@ -21,6 +21,7 @@ export default class ServiceManager {
 
     public serviceClosed(serviceClosed: Service) {
         const serviceIndex = this.services.findIndex((service) => service === serviceClosed);
+        if (this.authSerivce === this.services[serviceIndex]) this.authSerivce = null;
         this.services.splice(serviceIndex,1);
         console.log("Service " + serviceClosed.name + " closed");
     }
