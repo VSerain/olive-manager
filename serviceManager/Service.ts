@@ -12,17 +12,23 @@ interface RequestSerivce {
     data: any
 }
 
-interface requestApi {
+interface RequestApi {
     uid: number;
+    name: string;
     res: any;
     data: any;
-    promiseCallback: any;
+    auth: any;
+    promiseCallback: {
+        resolve: (value?: any) => void;
+        reject:  (value?: any) => void;
+    },
+    requestParams: any,
 }
 
 export default class Service {
     public initialized: boolean = false;
     private _config?: Config;
-    private requestPending: Array<requestApi> = [];
+    private requestPending: Array<RequestApi> = [];
 
     constructor(private socket: Socket, private serviceManager: ServiceManager) {
         this.socketOn("close", (data) => this.serviceManager.serviceClosed(this));
@@ -76,21 +82,24 @@ export default class Service {
         this.requestPending.splice(requestIndex,1);
     }
 
-    public sendRequest(data: any, auth: any, headers: any, res: any): Promise<any> {
+    public sendRequest(res: any, requestParams: any = {}, data: any = {}, auth: any = {}): Promise<any> {
         return new Promise((resolve, reject) => {
-            const request = {
+            const request : RequestApi = {
                 name: "request",
                 uid: parseInt((new Date().getTime() * (Math.random() + 1 * 100)).toFixed(0)),
-                res: res,
                 data: data,
                 promiseCallback : {
                     resolve,
                     reject
                 },
-                headers
-            }
-            this.requestPending.push(request);
-            this.socketWrite({name: request.name,uid: request.uid, data, auth, req: headers});
+                res: null,
+                auth,
+                requestParams
+            };
+
+            this.socketWrite(request);
+            
+            this.requestPending.push(Object.assign(request, {res}));
         });
     }
 

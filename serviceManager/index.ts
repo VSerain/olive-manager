@@ -27,23 +27,29 @@ export default class ServiceManager {
 
     public onRequest(req: any,res: any) {
         const url: string = req.url;
+        // Check if service is loaded
         const serviceName = url.split(/\//g)[1].split("?")[0];
         const service = this.services.find(service => service.initialized && service.name === serviceName);
         if (!service) return res.sendStatus(404);
+
+        // Build params for send to service
         const data = Object.assign({}, req.query, req.body);
-        const headers = {
+        const requestParams = {
             url: req.originalUrl,
             parsedUrl: req._parsedUrl,
             method: req.method,
             headers: req.headers
         };
-        if (service.requireAuth && !this.authSerivce) {
+
+        // Check if service required auth and if auth is loaded
+        if (service.requireAuth && (!this.authSerivce || !this.authSerivce.initialized)) {
             return res.sendStatus(401);
         }
 
         return new Promise((resolve, reject) => {
             if (service.requireAuth && this.authSerivce) {
-                return this.authSerivce.sendRequest(data, {}, headers, res).then(authResponse => {
+                // Call authService with data
+                return this.authSerivce.sendRequest(res, requestParams, data).then(authResponse => {
                     if (authResponse.status != "200") {
                         if(!authResponse.status) authResponse.status = 401;
                         return reject(authResponse.status);
@@ -55,9 +61,9 @@ export default class ServiceManager {
             }
             resolve();
         }).then((auth = {}) => {
-            return service.sendRequest(data, auth, headers, res);
+            return service.sendRequest(res, requestParams, data, auth);
         }).catch(status => {
-            res.sendStatus(status)
+            res.sendStatus(status);
         });
     
     }

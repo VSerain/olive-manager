@@ -23,7 +23,7 @@ setTimeout(() => {
                 uid: data.uid,
                 data: {}
             }
-            if (data.req.headers['api-key'] === "aaaaaa") {
+            if (data.requestParams.headers['api-key'] === "aaaaaa") {
                 response.data = {
                     status: 200,
                     data: {
