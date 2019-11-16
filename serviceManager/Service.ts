@@ -1,28 +1,11 @@
 import { Socket } from "net";
+import { Config, RequestApi, RequestSerivce, RequestParams } from "../interfaces";
 import ServiceManager from "./index";
-
-interface Config {
-    name: string,
-    requireAuth: boolean
-    isAuth?: boolean
-}
-
-interface RequestSerivce {
-    name: string,
-    data: any
-}
-
-interface requestApi {
-    uid: number;
-    res: any;
-    data: any;
-    promiseCallback: any;
-}
 
 export default class Service {
     public initialized: boolean = false;
     private _config?: Config;
-    private requestPending: Array<requestApi> = [];
+    private requestPending: Array<RequestApi> = [];
 
     constructor(private socket: Socket, private serviceManager: ServiceManager) {
         this.socketOn("close", (data) => this.serviceManager.serviceClosed(this));
@@ -65,32 +48,35 @@ export default class Service {
     }
     private sendResponse(response: any) {
         const requestIndex = this.requestPending.findIndex((request) => request.uid === response.uid);
-        this.requestPending[requestIndex].promiseCallback.resolve(response.data);
+        this.requestPending[requestIndex].resolever.resolve(response.data);
         this.requestPending[requestIndex].res.send(response.data);
         this.requestPending.splice(requestIndex,1);
     }
 
     private onAuthResponse(response: any) {
         const requestIndex = this.requestPending.findIndex((request) => request.uid === response.uid);
-        this.requestPending[requestIndex].promiseCallback.resolve(response.data);
+        this.requestPending[requestIndex].resolever.resolve(response.data);
         this.requestPending.splice(requestIndex,1);
     }
 
-    public sendRequest(data: any, auth: any, headers: any, res: any): Promise<any> {
+    public sendRequest(res: any, requestParams: RequestParams, data: any = {}, auth: any = {}): Promise<any> {
         return new Promise((resolve, reject) => {
-            const request = {
+            const request : RequestApi = {
                 name: "request",
                 uid: parseInt((new Date().getTime() * (Math.random() + 1 * 100)).toFixed(0)),
-                res: res,
                 data: data,
-                promiseCallback : {
+                resolever : {
                     resolve,
                     reject
                 },
-                headers
-            }
-            this.requestPending.push(request);
-            this.socketWrite({name: request.name,uid: request.uid, data, auth, req: headers});
+                res: null,
+                auth,
+                requestParams
+            };
+
+            this.socketWrite(request);
+            
+            this.requestPending.push(Object.assign(request, {res}));
         });
     }
 
