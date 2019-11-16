@@ -1,4 +1,5 @@
 import { Socket } from "net";
+import serviceHelper  from "../helpers/service-helper";
 import { Config, RequestApi, RequestSerivce, RequestParams } from "../interfaces";
 import ServiceManager from "./index";
 
@@ -9,12 +10,15 @@ export default class Service {
 
     constructor(private socket: Socket, private serviceManager: ServiceManager) {
         this.socketOn("close", (data) => this.serviceManager.serviceClosed(this));
+        this.socketOn("error", (data) => this.serviceManager.serviceClosed(this));
         this.socketOn("data", this.onData.bind(this));
     }
 
     private socketOn(name:string, callback: (data: RequestSerivce) => void) {
         this.socket.on(name,(data: any) => {
-            callback(JSON.parse(data.toString()) );
+            const objectData = serviceHelper.jsonValid(data.toString());
+            if (objectData.error) return;
+            callback(objectData);
         });
     }
 
