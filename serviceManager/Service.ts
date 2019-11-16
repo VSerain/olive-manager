@@ -1,29 +1,6 @@
 import { Socket } from "net";
+import { Config, RequestApi, RequestSerivce, RequestParams } from "../interfaces";
 import ServiceManager from "./index";
-
-interface Config {
-    name: string,
-    requireAuth: boolean
-    isAuth?: boolean
-}
-
-interface RequestSerivce {
-    name: string,
-    data: any
-}
-
-interface RequestApi {
-    uid: number;
-    name: string;
-    res: any;
-    data: any;
-    auth: any;
-    promiseCallback: {
-        resolve: (value?: any) => void;
-        reject:  (value?: any) => void;
-    },
-    requestParams: any,
-}
 
 export default class Service {
     public initialized: boolean = false;
@@ -71,24 +48,24 @@ export default class Service {
     }
     private sendResponse(response: any) {
         const requestIndex = this.requestPending.findIndex((request) => request.uid === response.uid);
-        this.requestPending[requestIndex].promiseCallback.resolve(response.data);
+        this.requestPending[requestIndex].resolever.resolve(response.data);
         this.requestPending[requestIndex].res.send(response.data);
         this.requestPending.splice(requestIndex,1);
     }
 
     private onAuthResponse(response: any) {
         const requestIndex = this.requestPending.findIndex((request) => request.uid === response.uid);
-        this.requestPending[requestIndex].promiseCallback.resolve(response.data);
+        this.requestPending[requestIndex].resolever.resolve(response.data);
         this.requestPending.splice(requestIndex,1);
     }
 
-    public sendRequest(res: any, requestParams: any = {}, data: any = {}, auth: any = {}): Promise<any> {
+    public sendRequest(res: any, requestParams: RequestParams, data: any = {}, auth: any = {}): Promise<any> {
         return new Promise((resolve, reject) => {
             const request : RequestApi = {
                 name: "request",
                 uid: parseInt((new Date().getTime() * (Math.random() + 1 * 100)).toFixed(0)),
                 data: data,
-                promiseCallback : {
+                resolever : {
                     resolve,
                     reject
                 },

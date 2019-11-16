@@ -1,4 +1,5 @@
 import * as net from "net";
+import { RequestParams } from "../interfaces";
 import Service from "./Service";
 
 export default class ServiceManager {
@@ -35,7 +36,7 @@ export default class ServiceManager {
 
         // Build params for send to service
         const data = Object.assign({}, req.query, req.body);
-        const requestParams = {
+        const requestParams: RequestParams = {
             url: req.originalUrl,
             parsedUrl: req._parsedUrl,
             method: req.method,
