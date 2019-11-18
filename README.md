@@ -78,14 +78,11 @@ The params ``data`` is send unaltered form the client http
 ```
 data: {
     status: number // HTTP Status
-    constants: any // 
     data: any // All neceseray information for authService
 }
 ```
 
 The params `status` is the http code returned by the auth service if the is 200 the request continue that propagation, but if is not 200 the manager send an http response with the status code.
-
-The params `constants` is an object where the constant is send. For exemple if authService wish send on other service the groups user 2 is the Admin.
 
 The params `data` is an object where all params is send to the next service with auth data. For exemple he contain the user data.
 
@@ -99,8 +96,6 @@ For any request the manager send allways from the same interface :
     name: string, // Name for the request type
     uid: number, // the unique id, allways build by the manager
     data: any, // All data send with HTTP request, query and/or body
-    resolver: null, // Deprecated Todo delete me
-    res: null, // Deprecated Todo delete me
     auth: any, // the data send by the auth service
     requestParams: any // Is the information from the http request
 }

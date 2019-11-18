@@ -1,12 +1,12 @@
 import { Socket } from "net";
 import serviceHelper  from "../helpers/service-helper";
-import { Config, RequestApi, RequestSerivce, RequestParams } from "../interfaces";
+import { Config, RequestMicroService, RequestMicroServicePending, RequestSerivce, RequestParams } from "../interfaces";
 import ServiceManager from "./index";
 
 export default class Service {
     public initialized: boolean = false;
     private _config?: Config;
-    private requestPending: Array<RequestApi> = [];
+    private requestPending: Array<RequestMicroServicePending> = [];
 
     constructor(private socket: Socket, private serviceManager: ServiceManager) {
         this.socketOn("close", (data) => this.serviceManager.serviceClosed(this));
@@ -64,23 +64,40 @@ export default class Service {
     }
 
     public sendRequest(res: any, requestParams: RequestParams, data: any = {}, auth: any = {}): Promise<any> {
+        return this._sendRequestToMicroSerivce("request",res, requestParams, data, auth);
+    }
+
+    public sendAuthRequest(res: any, requestParams: RequestParams, data: any = {}, auth: any = {}): Promise<any>  {
+        return this._sendRequestToMicroSerivce("authRequest",res, requestParams, data, auth);
+    }
+
+    private _sendRequestToMicroSerivce(name: string, res: any, requestParams: RequestParams, data: any = {}, auth: any = {}): Promise<any> {
         return new Promise((resolve, reject) => {
-            const request : RequestApi = {
-                name: "request",
-                uid: parseInt((new Date().getTime() * (Math.random() + 1 * 100)).toFixed(0)),
+            const uid =  parseInt((new Date().getTime() * (Math.random() + 1 * 100)).toFixed(0));
+            const request : RequestMicroService = {
+                name,
+                uid,
                 data: data,
-                resolever : {
-                    resolve,
-                    reject
-                },
-                res: null,
                 auth,
                 requestParams
             };
 
             this.socketWrite(request);
             
-            this.requestPending.push(Object.assign(request, {res}));
+            const requestSending: RequestMicroServicePending = {
+                name,
+                uid,
+                data: data,
+                auth,
+                requestParams,
+                resolever : {
+                    resolve,
+                    reject
+                },
+                res: res,
+            }
+
+            this.requestPending.push(requestSending);
         });
     }
 

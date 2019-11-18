@@ -9,7 +9,7 @@ export interface RequestSerivce {
     data: any
 }
 
-export interface RequestApi {
+export interface RequestMicroServicePending {
     uid: number;
     name: string;
     res: any;
@@ -19,9 +19,16 @@ export interface RequestApi {
         resolve: (value?: any) => void;
         reject:  (value?: any) => void;
     },
-    requestParams: RequestParams,
+    requestParams: RequestParams;
 }
 
+export interface RequestMicroService {
+    uid: number;
+    name: string;
+    data: any;
+    auth: any;
+    requestParams: RequestParams;
+}
 export interface RequestParams {
     url: string,
     parsedUrl: Object,
