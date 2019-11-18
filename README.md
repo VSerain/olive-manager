@@ -111,3 +111,12 @@ For any request the manager send allways from the same interface :
 The type `request` send to micro service when the manager get an http request
 
 The type `requestAuth` is send to auth micro service for authenticate the current http request
+
+## Overall functioning of the architecture
+
+On start manager, the different micro services connect to the manager and micro service send a request config !
+
+On manager recieve a http request, the manager check if micro service where the request must be send is load and init.   
+If micro service is ok, the manager check if the micro service require an auth, if is true, he (the manager) send a request to auth micro service ('requestAuth').   
+If the auth service return an http code 200, this manager send the request to micro service, and after the answer of the micro service, the manager re-send the answer to http client .
+If the auth service return an other http code the manager send the code to http client.
