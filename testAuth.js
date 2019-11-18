@@ -18,7 +18,6 @@ setTimeout(() => {
         );
         client.on("data", data => {
             data = JSON.parse(data.toString())
-            console.log(data);
             const response = {
                 name: "authResponse",
                 uid: data.uid,

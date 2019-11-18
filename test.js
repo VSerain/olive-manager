@@ -17,7 +17,6 @@ setTimeout(() => {
         );
         client.on("data", data => {
             data = JSON.parse(data.toString())
-            console.log(data);
             client.write(JSON.stringify({
                 name: "response",
                 uid: data.uid,

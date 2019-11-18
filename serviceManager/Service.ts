@@ -6,7 +6,7 @@ import ServiceManager from "./index";
 export default class Service {
     public initialized: boolean = false;
     private _config?: Config;
-    private requestPending: Array<RequestMicroServicePending> = [];
+    private requestsPending: Array<RequestMicroServicePending> = [];
 
     constructor(private socket: Socket, private serviceManager: ServiceManager) {
         this.socketOn("close", (data) => this.serviceManager.serviceClosed(this));
@@ -51,16 +51,16 @@ export default class Service {
         }
     }
     private sendResponse(response: any) {
-        const requestIndex = this.requestPending.findIndex((request) => request.uid === response.uid);
-        this.requestPending[requestIndex].resolever.resolve(response.data);
-        this.requestPending[requestIndex].res.send(response.data);
-        this.requestPending.splice(requestIndex,1);
+        const requestIndex = this.requestsPending.findIndex((request) => request.uid === response.uid);
+        this.requestsPending[requestIndex].resolever.resolve(response.data);
+        this.requestsPending[requestIndex].res.send(response.data);
+        this.requestsPending.splice(requestIndex,1);
     }
 
     private onAuthResponse(response: any) {
-        const requestIndex = this.requestPending.findIndex((request) => request.uid === response.uid);
-        this.requestPending[requestIndex].resolever.resolve(response.data);
-        this.requestPending.splice(requestIndex,1);
+        const requestIndex = this.requestsPending.findIndex((request) => request.uid === response.uid);
+        this.requestsPending[requestIndex].resolever.resolve(response.data);
+        this.requestsPending.splice(requestIndex,1);
     }
 
     public sendRequest(res: any, requestParams: RequestParams, data: any = {}, auth: any = {}): Promise<any> {
@@ -81,10 +81,7 @@ export default class Service {
                 auth,
                 requestParams
             };
-
-            this.socketWrite(request);
-            
-            const requestSending: RequestMicroServicePending = {
+            const requestPending: RequestMicroServicePending = {
                 name,
                 uid,
                 data: data,
@@ -97,7 +94,8 @@ export default class Service {
                 res: res,
             }
 
-            this.requestPending.push(requestSending);
+            this.requestsPending.push(requestPending);
+            this.socketWrite(request);
         });
     }
 
