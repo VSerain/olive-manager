@@ -52,8 +52,8 @@ export default class Service {
     }
     private sendResponse(response: any) {
         const requestIndex = this.requestsPending.findIndex((request) => request.uid === response.uid);
-        this.requestsPending[requestIndex].resolever.resolve(response.data);
-        this.requestsPending[requestIndex].res.send(response.data);
+        this.requestsPending[requestIndex].resolever.resolve(response.data.data);
+        this.requestsPending[requestIndex].res.status(response.data.status).send(response.data.data);
         this.requestsPending.splice(requestIndex,1);
     }
 
