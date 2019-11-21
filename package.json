@@ -1,5 +1,5 @@
 {
-  "name": "micman",
+  "name": "olive-manager",
   "version": "1.0.0",
   "description": "A manager for node micro service",
   "main": "build/main.js",

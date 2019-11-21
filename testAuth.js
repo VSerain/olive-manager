@@ -25,8 +25,10 @@ setTimeout(() => {
             }
             if (data.requestParams.headers['api-key'] === "aaaaaa") {
                 response.data = {
-                    status: 200,
-                    data: {
+                    headers: {
+                        status: 200,
+                    },
+                    body: {
                         user: {
                             name: "victor",
                             groups: ["admin", "user"]
@@ -36,7 +38,9 @@ setTimeout(() => {
             }
             else {
                 response.data = {
-                    status: 401,
+                    headers: {
+                        status: 401,
+                    }
                 };
             }
             client.write(JSON.stringify(response));
