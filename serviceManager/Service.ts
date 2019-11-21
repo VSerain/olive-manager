@@ -120,4 +120,11 @@ export default class Service {
         }
         throw new Error("Service is not correctly initialized");
     }
+
+    get requireAuthRoutes(): Array<string> {
+        if (this.config && this.initialized) {
+            return this.config.requireAuthRoutes || [];
+        }
+        throw new Error("Service is not correctly initialized");
+    }
 }
