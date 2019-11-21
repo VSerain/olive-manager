@@ -65,9 +65,11 @@ The params ``isAuth`` define if the micro service should be considered as a Auth
 
 #### response :
 ```
-data: data: {
-    status: number // HTTP Status
-    data: any // All neceseray information for authService
+data: {
+    headers: {
+        status: number // HTTP Status
+    }
+    body: any // All neceseray information for service
 }
 ```
 The params `status` is the http code returned by the service if the is 200 the request continue that propagation, but if is not 200 the manager send an http response with the status code.
@@ -77,8 +79,10 @@ The params ``data`` is send unaltered form the client http
 #### authResponse :
 ```
 data: {
-    status: number // HTTP Status
-    data: any // All neceseray information for authService
+    headers: {
+        status: number // HTTP Status
+    }
+    body: any // All neceseray information for authService
 }
 ```
 
@@ -97,7 +101,7 @@ For any request the manager send allways from the same interface :
     uid: number, // the unique id, allways build by the manager
     data: any, // All data send with HTTP request, query and/or body
     auth: any, // the data send by the auth service
-    requestParams: any // Is the information from the http request
+    requestParams: object // Is the information from the http request
 }
 ```
 

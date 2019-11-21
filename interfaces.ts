@@ -15,10 +15,10 @@ export interface RequestMicroServicePending {
     res: any;
     data: any;
     auth: any;
-    resolever: {
+    resolver: {
         resolve: (value?: any) => void;
         reject:  (value?: any) => void;
-    },
+    };
     requestParams: RequestParams;
 }
 
@@ -30,8 +30,8 @@ export interface RequestMicroService {
     requestParams: RequestParams;
 }
 export interface RequestParams {
-    url: string,
-    parsedUrl: Object,
-    method: string,
-    headers: any
+    url: string;
+    parsedUrl: Object;
+    method: string;
+    headers: any;
 }

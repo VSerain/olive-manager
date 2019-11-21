@@ -52,12 +52,12 @@ export default class ServiceManager {
             if (service.requireAuth && this.authSerivce) {
                 // Call authService with data
                 return this.authSerivce.sendAuthRequest(res, requestParams, data).then(authResponse => {
-                    if (authResponse.status != "200") {
+                    if (authResponse.headers.status != "200") {
                         if(!authResponse.status) authResponse.status = 401;
                         return reject(authResponse.status);
                     }
                     else {
-                        return resolve(authResponse.data);
+                        return resolve(authResponse.body);
                     }
                 });
             }

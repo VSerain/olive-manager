@@ -52,14 +52,18 @@ export default class Service {
     }
     private sendResponse(response: any) {
         const requestIndex = this.requestsPending.findIndex((request) => request.uid === response.uid);
-        this.requestsPending[requestIndex].resolever.resolve(response.data.data);
-        this.requestsPending[requestIndex].res.status(response.data.status).send(response.data.data);
+        if (!this.requestsPending[requestIndex]) return;
+
+        this.requestsPending[requestIndex].resolver.resolve(response.data.body);
+        this.requestsPending[requestIndex].res.status(response.data.headers.status).send(response.data.body);
         this.requestsPending.splice(requestIndex,1);
     }
 
     private onAuthResponse(response: any) {
         const requestIndex = this.requestsPending.findIndex((request) => request.uid === response.uid);
-        this.requestsPending[requestIndex].resolever.resolve(response.data);
+        if (!this.requestsPending[requestIndex]) return;
+
+        this.requestsPending[requestIndex].resolver.resolve(response.data);
         this.requestsPending.splice(requestIndex,1);
     }
 
@@ -87,7 +91,7 @@ export default class Service {
                 data: data,
                 auth,
                 requestParams,
-                resolever : {
+                resolver : {
                     resolve,
                     reject
                 },

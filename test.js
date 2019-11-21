@@ -21,7 +21,12 @@ setTimeout(() => {
                 name: "response",
                 uid: data.uid,
                 data: {
-                    'response': "hello world " + data.auth.user.name
+                    headers: {
+                        status: 200,
+                    },
+                    body: {
+                        'response': "hello world " + data.auth.user.name
+                    }
                 }
             }));
         })
