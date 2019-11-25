@@ -49,7 +49,10 @@ export default class ServiceManager {
 
         return new Promise((resolve, reject) => {
             const authRequest = () => {
-                if (!this.authSerivce) return;
+                if (!this.authSerivce) {
+                    reject(401)
+                    return;
+                };
                 return this.authSerivce.sendAuthRequest(res, requestParams, data).then(authResponse => {
                     if (authResponse.headers.status != "200") {
                         if(!authResponse.status) authResponse.status = 401;
@@ -62,15 +65,17 @@ export default class ServiceManager {
             }
             if (service.requireAuth && this.authSerivce) { 
                 // Call authService with data
-                return authRequest();
+                authRequest();
             }
             else if (service.requireAuthRoutes.length > 0 && this.authSerivce) {
                 const require = service.requireAuthRoutes.find(regexRoute => url.match(new RegExp(regexRoute,"gi")));
                 if (require) {
-                    return authRequest();
+                    authRequest();
                 }
             }
-            resolve();
+            else {
+                resolve();
+            }
         }).then((auth = {}) => {
             return service.sendRequest(res, requestParams, data, auth);
         }).catch(status => {

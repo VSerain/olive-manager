@@ -2,7 +2,7 @@ export interface Config {
     name: string,
     requireAuth: boolean
     isAuth?: boolean,
-    requireAuthRoutes: Array<string>
+    requireAuthRoutes?: Array<string>
 }
 
 export interface RequestSerivce {
