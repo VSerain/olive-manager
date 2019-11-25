@@ -16,7 +16,7 @@ export default class ServiceManager {
     }
 
     public addServiceAuth(service: Service) {
-        console.log("Service", service.name, "is the auth Service");
+        console.log("Service", service.name, "is the authService");
         this.authSerivce = service;
     }
 
@@ -42,26 +42,40 @@ export default class ServiceManager {
             method: req.method,
             headers: req.headers
         };
-
         // Check if service required auth and if auth is loaded
-        if (service.requireAuth && (!this.authSerivce || !this.authSerivce.initialized)) {
+        if ((service.requireAuth || service.requireAuthRoutes.length === 0) && (!this.authSerivce || !this.authSerivce.initialized)) {
             return res.sendStatus(401);
         }
 
         return new Promise((resolve, reject) => {
-            if (service.requireAuth && this.authSerivce) {
-                // Call authService with data
+            const authRequest = () => {
+                if (!this.authSerivce) {
+                    reject(401)
+                    return;
+                };
                 return this.authSerivce.sendAuthRequest(res, requestParams, data).then(authResponse => {
                     if (authResponse.headers.status != "200") {
                         if(!authResponse.status) authResponse.status = 401;
-                        return reject(authResponse.status);
+                        reject(authResponse.status);
                     }
                     else {
-                        return resolve(authResponse.body);
+                        resolve(authResponse.body);
                     }
                 });
             }
-            resolve();
+            if (service.requireAuth && this.authSerivce) { 
+                // Call authService with data
+                authRequest();
+            }
+            else if (service.requireAuthRoutes.length > 0 && this.authSerivce) {
+                const require = service.requireAuthRoutes.find(regexRoute => url.match(new RegExp(regexRoute,"gi")));
+                if (require) {
+                    authRequest();
+                }
+            }
+            else {
+                resolve();
+            }
         }).then((auth = {}) => {
             return service.sendRequest(res, requestParams, data, auth);
         }).catch(status => {
