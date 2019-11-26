@@ -7,9 +7,9 @@ export default {
             // So this is string
             jsonObject = {
                 error: true,
-                data: json
-            }
+                data: json,
+            };
         }
         return jsonObject;
-    }
-}
+    },
+};
