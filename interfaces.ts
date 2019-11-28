@@ -1,13 +1,13 @@
 export interface Config {
-    name: string,
-    requireAuth: boolean
-    isAuth?: boolean,
-    requireAuthRoutes?: Array<string>
+    name: string;
+    requireAuth: boolean;
+    isAuth?: boolean;
+    requireAuthRoutes?: Array<string>;
 }
 
 export interface RequestSerivce {
-    name: string,
-    data: any
+    name: string;
+    data: any;
 }
 
 export interface RequestMicroServicePending {
@@ -18,7 +18,7 @@ export interface RequestMicroServicePending {
     auth: any;
     resolver: {
         resolve: (value?: any) => void;
-        reject:  (value?: any) => void;
+        reject: (value?: any) => void;
     };
     requestParams: RequestParams;
 }
@@ -30,6 +30,7 @@ export interface RequestMicroService {
     auth: any;
     requestParams: RequestParams;
 }
+
 export interface RequestParams {
     url: string;
     parsedUrl: Object;

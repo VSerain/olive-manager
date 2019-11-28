@@ -1,0 +1,39 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint-config-airbnb-base"
+    ],
+    "jsRules": {},
+    "rulesDirectory": [],
+    "env": {
+        "commonjs": true,
+        "es6": true,
+        "node": true,
+        "jest": true
+    },
+    "plugins": [
+        "jsdoc"
+    ],
+    "rules": {
+        "quotemark": [true, "double", "avoid-escape", "avoid-template"],
+        "max-line-length": [false, {
+                    "limit": 20, 
+                    "ignore-pattern": "^import [^,]+ from |^export | implements"
+                }
+        ],
+        "indent": [false, "spaces", 2],
+        "ter-max-len": false,
+        "ter-indent": false,
+        "no-magic-numbers": false,
+        "linebreak-style": false,
+        "ter-padded-blocks": false,
+        "variable-name":false
+    },
+    "settings": {
+        "jsdoc": {
+            "tagNamePreference": {
+                "returns": "return"
+            }
+        }
+    }
+}
