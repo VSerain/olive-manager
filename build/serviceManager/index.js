@@ -64,7 +64,7 @@ var ServiceManager = /** @class */ (function () {
                     return;
                 }
                 return _this.authSerivce.sendAuthRequest(res, requestParams, data).then(function (authResponse) {
-                    if (authResponse.headers.status !== "200" || authResponse.headers.status !== 200) {
+                    if (authResponse.headers.status !== "200" && authResponse.headers.status !== 200) {
                         if (!authResponse.headers.status) {
                             authResponse.headers.status = 401;
                         }

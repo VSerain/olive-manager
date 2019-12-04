@@ -53,7 +53,7 @@ export default class ServiceManager {
                     return;
                 }
                 return this.authSerivce.sendAuthRequest(res, requestParams, data).then((authResponse) => {
-                    if (authResponse.headers.status !== "200" || authResponse.headers.status !== 200) {
+                    if (authResponse.headers.status !== "200" && authResponse.headers.status !== 200) {
                         if (!authResponse.headers.status) { authResponse.headers.status = 401; }
                         reject(authResponse.headers.status);
                     } else {
