@@ -1,3 +1,5 @@
+/!\ Project is not stable /!\
+
 # Welcome to Olive Manager!
 Olive Manager is node server for manage the Olive micro services.
 He is manage the HTTP server and relays the request to micro services !
