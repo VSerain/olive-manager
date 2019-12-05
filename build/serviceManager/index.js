@@ -84,6 +84,9 @@ var ServiceManager = /** @class */ (function () {
                 if (require_1) {
                     authRequest();
                 }
+                else {
+                    resolve();
+                }
             }
             else {
                 resolve();

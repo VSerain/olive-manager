@@ -68,6 +68,8 @@ export default class ServiceManager {
                 const require = service.requireAuthRoutes.find((regexRoute: string) => url.match(new RegExp(regexRoute, "gi")));
                 if (require) {
                     authRequest();
+                } else {
+                    resolve();
                 }
             } else {
                 resolve();
