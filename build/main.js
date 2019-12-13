@@ -6,13 +6,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var serviceManager_1 = __importDefault(require("./serviceManager"));
 var express_1 = __importDefault(require("express"));
 var body_parser_1 = __importDefault(require("body-parser"));
+var cors_1 = __importDefault(require("cors"));
 var app = express_1.default();
 var HOST = "127.0.0.1";
 var PORTFORSERVICES = 9999; // @todo Change by configurable port
 var serviceManager = new serviceManager_1.default(PORTFORSERVICES, HOST);
+app.use(cors_1.default());
 app.use(body_parser_1.default.json()); // to support JSON-encoded bodies
 app.use(body_parser_1.default.urlencoded({
     extended: true,
+}));
+app.options("*", cors_1.default({
+    origin: "*",
 }));
 app.all("*", function (req, res) {
     serviceManager.onRequest(req, res);
