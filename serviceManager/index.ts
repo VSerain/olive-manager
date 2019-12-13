@@ -17,6 +17,28 @@ export default class ServiceManager {
         this.authSerivce = service;
     }
 
+    private addService(socket: net.Socket) {
+        this.services.push(new Service(socket, this));
+    }
+
+    public checkCluster(currentService: Service) {
+        let isCluster = false;
+        this.services.forEach((service:Service) => {
+            if (service === currentService) return;
+            if (service.config && currentService.config) {
+                if (currentService.config.name === service.name) {
+                    isCluster = true;
+                }
+            }
+        });
+
+        if (isCluster) {
+            const serviceIndex = this.services.findIndex((service: Service) => service === currentService);
+            this.services.splice(serviceIndex, 1);
+        }
+        return isCluster;
+    }
+
     public serviceClosed(serviceClosed: Service) {
         const serviceIndex = this.services.findIndex((service: Service) => service === serviceClosed);
         if (this.authSerivce === this.services[serviceIndex]) { this.authSerivce = null; }
@@ -79,9 +101,5 @@ export default class ServiceManager {
         .catch((status: number) => {
             res.sendStatus(status);
         });
-    }
-
-    private addService(socket: net.Socket) {
-        this.services.push(new Service(socket, this));
     }
 }
