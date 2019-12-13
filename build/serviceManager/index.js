@@ -26,6 +26,26 @@ var ServiceManager = /** @class */ (function () {
         console.log("Service", service.name, "is the authService");
         this.authSerivce = service;
     };
+    ServiceManager.prototype.addService = function (socket) {
+        this.services.push(new Service_1.default(socket, this));
+    };
+    ServiceManager.prototype.checkCluster = function (currentService) {
+        var isCluster = false;
+        this.services.forEach(function (service) {
+            if (service === currentService)
+                return;
+            if (service.config && currentService.config) {
+                if (currentService.config.name === service.name) {
+                    isCluster = true;
+                }
+            }
+        });
+        if (isCluster) {
+            var serviceIndex = this.services.findIndex(function (service) { return service === currentService; });
+            this.services.splice(serviceIndex, 1);
+        }
+        return isCluster;
+    };
     ServiceManager.prototype.serviceClosed = function (serviceClosed) {
         var serviceIndex = this.services.findIndex(function (service) { return service === serviceClosed; });
         if (this.authSerivce === this.services[serviceIndex]) {
@@ -99,9 +119,6 @@ var ServiceManager = /** @class */ (function () {
             .catch(function (status) {
             res.sendStatus(status);
         });
-    };
-    ServiceManager.prototype.addService = function (socket) {
-        this.services.push(new Service_1.default(socket, this));
     };
     return ServiceManager;
 }());

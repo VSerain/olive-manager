@@ -75,11 +75,13 @@ export default class Service {
     }
 
     private initConfiguration(data: Config) {
-        this.log("Service " + data.name + " initialized");
         this._CONFIG = data;
-        this.initialized = true;
-        if (data.isAuth) {
-            this.serviceManager.addServiceAuth(this);
+        if(!this.serviceManager.checkCluster(this)) {
+            this.initialized = true;
+            this.log("Service " + data.name + " initialized");
+            if (data.isAuth) {
+                this.serviceManager.addServiceAuth(this);
+            }
         }
     }
     private sendResponse(response: any) {

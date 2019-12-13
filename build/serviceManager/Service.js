@@ -90,11 +90,13 @@ var Service = /** @class */ (function () {
         }
     };
     Service.prototype.initConfiguration = function (data) {
-        this.log("Service " + data.name + " initialized");
         this._CONFIG = data;
-        this.initialized = true;
-        if (data.isAuth) {
-            this.serviceManager.addServiceAuth(this);
+        if (!this.serviceManager.checkCluster(this)) {
+            this.initialized = true;
+            this.log("Service " + data.name + " initialized");
+            if (data.isAuth) {
+                this.serviceManager.addServiceAuth(this);
+            }
         }
     };
     Service.prototype.sendResponse = function (response) {
